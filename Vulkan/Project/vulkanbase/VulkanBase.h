@@ -21,6 +21,8 @@
 #include "DAEMesh.h"
 #include "GP2CommandBuffer.h"
 #include "GP2CommandPool.h"
+#include "GP2GraphicsPipeline.h"
+#include "GP2RenderPass.h"
 #include "GP2Shader.h"
 
 const std::vector<const char*> validationLayers = {
@@ -77,8 +79,10 @@ private:
 		m_Mesh.AddVertex({-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f});
 		
 		m_Mesh.Initialize(physicalDevice, device);
-		createRenderPass();
-		createGraphicsPipeline();
+		m_RenderPass.createRenderPass(device, swapChainImageFormat);
+		m_GraphicsPipeline.createGraphicsPipeline(device, m_GradientShader, m_RenderPass.GetRenderPass());
+		//createRenderPass();
+		//createGraphicsPipeline();
 		createFrameBuffers();
 		// week 02
 		m_CommandPool.CreateCommandPool(device, findQueueFamilies(physicalDevice));
@@ -109,9 +113,12 @@ private:
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
 		}
 
-		vkDestroyPipeline(device, graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-		vkDestroyRenderPass(device, renderPass, nullptr);
+		//vkDestroyPipeline(device, graphicsPipeline, nullptr);
+		//vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+		//vkDestroyRenderPass(device, renderPass, nullptr);
+
+		m_GraphicsPipeline.Destroy();
+		m_RenderPass.Destroy();
 
 		for (auto imageView : swapChainImageViews) {
 			vkDestroyImageView(device, imageView, nullptr);
@@ -167,7 +174,6 @@ private:
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
-	int findMemoryTypes(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void drawFrame(uint32_t imageIndex, const VkCommandBuffer& commandBuffer);
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	
@@ -177,14 +183,17 @@ private:
 
 	DAEMesh m_Mesh{};
 
+	GP2GraphicsPipeline m_GraphicsPipeline;
+	GP2RenderPass m_RenderPass;
+
 	std::vector<VkFramebuffer> swapChainFramebuffers;
-	VkPipelineLayout pipelineLayout;
-	VkPipeline graphicsPipeline;
-	VkRenderPass renderPass;
+	//VkPipelineLayout pipelineLayout;
+	//VkPipeline graphicsPipeline;
+	//VkRenderPass renderPass;
 
 	void createFrameBuffers();
-	void createRenderPass();
-	void createGraphicsPipeline();
+	//void createRenderPass();
+	//void createGraphicsPipeline();
 
 	// Week 04
 	// Swap chain and image view support
