@@ -83,6 +83,25 @@ void GP2GraphicsPipeline::createGraphicsPipeline(VkDevice device, GP2Shader& sha
 	shader.DestroyShaderModules(device);
 }
 
+void GP2GraphicsPipeline::DrawFrame(const VkCommandBuffer& commandBuffer, VkExtent2D swapChainExtent)
+{
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
+
+	VkViewport viewport{};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(swapChainExtent.width);
+	viewport.height = static_cast<float>(swapChainExtent.height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+
+	VkRect2D scissor{};
+	scissor.offset = { 0, 0 };
+	scissor.extent = swapChainExtent;
+	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+}
+
 void GP2GraphicsPipeline::Destroy()
 {
 	vkDestroyPipeline(m_Device, m_GraphicsPipeline, nullptr);

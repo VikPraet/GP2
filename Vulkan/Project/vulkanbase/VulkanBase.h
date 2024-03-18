@@ -81,8 +81,6 @@ private:
 		m_Mesh.Initialize(physicalDevice, device);
 		m_RenderPass.createRenderPass(device, swapChainImageFormat);
 		m_GraphicsPipeline.createGraphicsPipeline(device, m_GradientShader, m_RenderPass.GetRenderPass());
-		//createRenderPass();
-		//createGraphicsPipeline();
 		createFrameBuffers();
 		// week 02
 		m_CommandPool.CreateCommandPool(device, findQueueFamilies(physicalDevice));
@@ -112,10 +110,6 @@ private:
 		for (auto framebuffer : swapChainFramebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
 		}
-
-		//vkDestroyPipeline(device, graphicsPipeline, nullptr);
-		//vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-		//vkDestroyRenderPass(device, renderPass, nullptr);
 
 		m_GraphicsPipeline.Destroy();
 		m_RenderPass.Destroy();
@@ -163,8 +157,6 @@ private:
 	GLFWwindow* window;
 	void initWindow();
 
-	void drawScene();
-
 	// Week 02
 	// Queue families
 	// CommandBuffer concept
@@ -192,8 +184,6 @@ private:
 	//VkRenderPass renderPass;
 
 	void createFrameBuffers();
-	//void createRenderPass();
-	//void createGraphicsPipeline();
 
 	// Week 04
 	// Swap chain and image view support

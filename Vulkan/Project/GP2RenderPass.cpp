@@ -35,6 +35,22 @@ void GP2RenderPass::createRenderPass(VkDevice device, VkFormat swapChainImageFor
 	}
 }
 
+void GP2RenderPass::BeginRenderPass(VkCommandBuffer commandBuffer, VkExtent2D swapChainExtent, const std::vector<VkFramebuffer>& frameBuffers, uint32_t idx)
+{
+	VkRenderPassBeginInfo renderPassInfo{};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass = m_RenderPass;
+	renderPassInfo.framebuffer = frameBuffers[idx];
+	renderPassInfo.renderArea.offset = { 0, 0 };
+	renderPassInfo.renderArea.extent = swapChainExtent;
+
+	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	renderPassInfo.clearValueCount = 1;
+	renderPassInfo.pClearValues = &clearColor;
+
+	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
 void GP2RenderPass::Destroy()
 {
 	vkDestroyRenderPass(m_Device, m_RenderPass, nullptr);

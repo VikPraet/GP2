@@ -12,7 +12,6 @@ public:
 	) : m_VertexShaderFile{ vertexShaderFile },
 		m_FragmentShaderFile{ fragmentShaderFile }
 	{
-		
 	}
 
 	~GP2Shader() = default;

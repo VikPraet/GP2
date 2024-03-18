@@ -6,9 +6,8 @@ class GP2GraphicsPipeline
 {
 public:
 	void createGraphicsPipeline(VkDevice device, GP2Shader& shader, VkRenderPass renderPass);
+	void DrawFrame(const VkCommandBuffer& commandBuffer, VkExtent2D swapChainExtent);
 	void Destroy();
-
-	VkPipeline& GetGraphicsPipeline() { return m_GraphicsPipeline; }
 
 private:
 	VkPipeline m_GraphicsPipeline;
