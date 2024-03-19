@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "Device.h"
-#include "window.h"
+#include "engine/Device.h"
+#include "engine/window.h"
 #include "GameObject.h"
-#include "Renderer.h"
+#include "engine/Renderer.h"
 
 namespace vve
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Model.h"
+#include "Mesh.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -45,7 +45,7 @@ namespace vve
 
 		id_t getId() { return id; }
 
-		std::shared_ptr<VveModel> model{};
+		std::shared_ptr<VveMesh> model{};
 		glm::vec3 color{};
 		TransformComponent transform{};
 

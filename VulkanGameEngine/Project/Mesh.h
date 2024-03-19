@@ -1,5 +1,5 @@
 #pragma once
-#include "Device.h"
+#include "engine/Device.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -7,9 +7,10 @@
 
 #include <vector>
 
+
 namespace vve
 {
-	class VveModel
+	class VveMesh
 	{
 	public:
 		struct Vertex {
@@ -20,11 +21,11 @@ namespace vve
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 		};
 
-		VveModel(VveDevice& device, const std::vector<Vertex>& vertices);
-		~VveModel();
+		VveMesh(VveDevice& device, const std::vector<Vertex>& vertices);
+		~VveMesh();
 
-		VveModel(const VveModel&) = delete;
-		VveModel& operator=(const VveModel&) = delete;
+		VveMesh(const VveMesh&) = delete;
+		VveMesh& operator=(const VveMesh&) = delete;
 
 		void bind(VkCommandBuffer commandBuffer);
 		void draw(VkCommandBuffer commandBuffer);

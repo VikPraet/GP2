@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "window.h"
+#include "engine/window.h"
 
 namespace vve
 {

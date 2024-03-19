@@ -1,14 +1,13 @@
 #include "App.h"
 
-#include "SimpleRenderSystem.h" 
+#include "engine/SimpleRenderSystem.h" 
 #include "Camera.h"
-#include "GameTime.h"
+#include "engine/GameTime.h"
 #include "KeyboardMovementController.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
 
 
 vve::FirstApp::FirstApp()
@@ -69,8 +68,8 @@ void vve::FirstApp::run()
 	vkDeviceWaitIdle(m_Device.device());
 }
 
-std::unique_ptr<vve::VveModel> createCubeModel(vve::VveDevice& device, glm::vec3 offset) {
-    std::vector<vve::VveModel::Vertex> vertices{
+std::unique_ptr<vve::VveMesh> createCubeModel(vve::VveDevice& device, glm::vec3 offset) {
+    std::vector<vve::VveMesh::Vertex> vertices{
 
         // left face (white)
         {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
@@ -124,12 +123,12 @@ std::unique_ptr<vve::VveModel> createCubeModel(vve::VveDevice& device, glm::vec3
     for (auto& v : vertices) {
         v.position += offset;
     }
-    return std::make_unique<vve::VveModel>(device, vertices);
+    return std::make_unique<vve::VveMesh>(device, vertices);
 }
 
 void vve::FirstApp::loadGameObjects()
 {
-    std::shared_ptr<VveModel> model = createCubeModel(m_Device, { .0f, .0f, .0f });
+    std::shared_ptr<VveMesh> model = createCubeModel(m_Device, { .0f, .0f, .0f });
 
     auto cube = VveGameObject::createGameObject();
     cube.model = model;

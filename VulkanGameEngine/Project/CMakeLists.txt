@@ -25,17 +25,17 @@ add_custom_target(
 
 
 set(SOURCES
-    "main.cpp"
-    "window.cpp"
-    "App.cpp"
-    "Pipeline.cpp"
-    "Device.cpp"
-    "SwapChain.cpp"
-    "Model.cpp"
-    "Renderer.cpp"
-    "SimpleRenderSystem.cpp"
+    "main/main.cpp"
+    "engine/window.cpp"
+    "main/App.cpp"
+    "engine/Pipeline.cpp"
+    "engine/Device.cpp"
+    "engine/SwapChain.cpp"
+    "Mesh.cpp"
+    "engine/Renderer.cpp"
+    "engine/SimpleRenderSystem.cpp"
     "Camera.cpp"
-    "GameTime.cpp"
+    "engine/GameTime.cpp"
     "KeyboardMovementController.cpp"
     )
 

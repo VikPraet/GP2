@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <cassert>
 
-#include "Model.h"
+#include "Mesh.h"
 
 namespace vve
 {
@@ -142,8 +142,8 @@ namespace vve
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 
-		auto bindingDescriptions = VveModel::Vertex::getBindingDescriptions();
-		auto attributeDescriptions = VveModel::Vertex::getAttributeDescriptions();
+		auto bindingDescriptions = VveMesh::Vertex::getBindingDescriptions();
+		auto attributeDescriptions = VveMesh::Vertex::getAttributeDescriptions();
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());

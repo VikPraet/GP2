@@ -1,6 +1,6 @@
-#include "Model.h"
+#include "Mesh.h"
 
-std::vector<VkVertexInputBindingDescription> vve::VveModel::Vertex::getBindingDescriptions()
+std::vector<VkVertexInputBindingDescription> vve::VveMesh::Vertex::getBindingDescriptions()
 {
 	std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
 	bindingDescriptions[0].binding = 0;
@@ -9,7 +9,7 @@ std::vector<VkVertexInputBindingDescription> vve::VveModel::Vertex::getBindingDe
 	return bindingDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> vve::VveModel::Vertex::getAttributeDescriptions()
+std::vector<VkVertexInputAttributeDescription> vve::VveMesh::Vertex::getAttributeDescriptions()
 {
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
 	attributeDescriptions[0].binding = 0;
@@ -25,31 +25,31 @@ std::vector<VkVertexInputAttributeDescription> vve::VveModel::Vertex::getAttribu
 	return attributeDescriptions;
 }
 
-vve::VveModel::VveModel(VveDevice& device, const std::vector<Vertex>& vertices)
+vve::VveMesh::VveMesh(VveDevice& device, const std::vector<Vertex>& vertices)
 	: m_Device(device)
 {
 	createVertexBuffers(vertices);
 }
 
-vve::VveModel::~VveModel()
+vve::VveMesh::~VveMesh()
 {
 	vkDestroyBuffer(m_Device.device(), m_VertexBuffer, nullptr);
 	vkFreeMemory(m_Device.device(), m_VertexBufferMemory, nullptr);
 }
 
-void vve::VveModel::bind(VkCommandBuffer commandBuffer)
+void vve::VveMesh::bind(VkCommandBuffer commandBuffer)
 {
 	VkBuffer buffers[] = { m_VertexBuffer };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 }
 
-void vve::VveModel::draw(VkCommandBuffer commandBuffer)
+void vve::VveMesh::draw(VkCommandBuffer commandBuffer)
 {
 	vkCmdDraw(commandBuffer, m_VertexCount, 1, 0, 0);
 }
 
-void vve::VveModel::createVertexBuffers(const std::vector<Vertex>& vertices)
+void vve::VveMesh::createVertexBuffers(const std::vector<Vertex>& vertices)
 {
 	m_VertexCount = static_cast<uint32_t>(vertices.size());
 	assert(m_VertexCount >= 3 && "Vertex count must be at least 3");
