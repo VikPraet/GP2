@@ -12,3 +12,6 @@ _deps
 
 Vulkan/.vs
 Vulkan/out
+
+VulkanGameEngine/.vs
+VulkanGameEngine/out
