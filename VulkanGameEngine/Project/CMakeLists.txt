@@ -45,3 +45,15 @@ add_dependencies(${PROJECT_NAME} Shaders)
 # Link libraries
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Vulkan_LIBRARIES} glfw)
+
+
+# Set the directory for resources
+set(RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+set(RESOURCES_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/resources")
+
+# Custom command to copy the resources folder
+add_custom_command(
+    TARGET VulkanGameEngine PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCES_DIR} ${RESOURCES_BINARY_DIR}
+    COMMENT "Copying resources to build directory"
+)
