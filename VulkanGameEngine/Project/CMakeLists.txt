@@ -37,6 +37,7 @@ set(SOURCES
     "Camera.cpp"
     "engine/GameTime.cpp"
     "KeyboardMovementController.cpp"
+    "GameObject.cpp"
     )
 
 # Create the executable

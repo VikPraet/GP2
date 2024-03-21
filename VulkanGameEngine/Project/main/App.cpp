@@ -70,12 +70,12 @@ void vve::FirstApp::run()
 
 void vve::FirstApp::loadGameObjects()
 {
-    std::shared_ptr<VveMesh> model = VveMesh::createModelFromFile(m_Device, "colored_cube.obj");
+    std::shared_ptr<VveMesh> model = VveMesh::createModelFromFile(m_Device, "sm_cowboy_test.obj");
 
     auto gameObject = VveGameObject::createGameObject();
     gameObject.model = model;
-    gameObject.transform.translation = { .0f, .0f, 2.5f };
-    gameObject.transform.scale = glm::vec3(0.5f);
+    gameObject.transform.translation = { .0f, .5f, 2.5f };
+    gameObject.transform.scale = glm::vec3(1.f, -1.f, -1.f);
 
     m_GameObjects.push_back(std::move(gameObject));
 }
