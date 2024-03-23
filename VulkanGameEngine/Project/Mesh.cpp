@@ -22,6 +22,7 @@ namespace std
 			return seed;
 		}
 	};
+
 }
 
 std::vector<VkVertexInputBindingDescription> vve::VveMesh::Vertex::getBindingDescriptions()
@@ -117,18 +118,6 @@ vve::VveMesh::VveMesh(VveDevice& device, const VveMesh::Builder& builder)
 	createIndexBuffers(builder.indices);
 }
 
-vve::VveMesh::~VveMesh()
-{
-	vkDestroyBuffer(m_Device.device(), m_VertexBuffer, nullptr);
-	vkFreeMemory(m_Device.device(), m_VertexBufferMemory, nullptr);
-
-	if(m_HasIndexBuffer)
-	{
-		vkDestroyBuffer(m_Device.device(), m_IndexBuffer, nullptr);
-		vkFreeMemory(m_Device.device(), m_IndexBufferMemory, nullptr);
-	}
-}
-
 std::unique_ptr<vve::VveMesh> vve::VveMesh::createModelFromFile(VveDevice& device, const std::string& fileName)
 {
 	Builder builder{};
@@ -139,13 +128,13 @@ std::unique_ptr<vve::VveMesh> vve::VveMesh::createModelFromFile(VveDevice& devic
 
 void vve::VveMesh::bind(VkCommandBuffer commandBuffer)
 {
-	VkBuffer buffers[] = { m_VertexBuffer };
+	VkBuffer buffers[] = { m_VertexBuffer->getBuffer() };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
 	if(m_HasIndexBuffer)
 	{
-		vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 }
 
@@ -166,23 +155,28 @@ void vve::VveMesh::createVertexBuffers(const std::vector<Vertex>& vertices)
 	m_VertexCount = static_cast<uint32_t>(vertices.size());
 	assert(m_VertexCount >= 3 && "Vertex count must be at least 3");
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * m_VertexCount;
+	uint32_t vertexSize = sizeof(vertices[0]);
 
-	VkBuffer stagingBuffer{};
-	VkDeviceMemory stagingBufferMemory{};
+	VveBuffer stagingBuffer{
+		m_Device,
+		vertexSize,
+		m_VertexCount,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	};
 
-	m_Device.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+	stagingBuffer.map();
+	stagingBuffer.writeToBuffer((void*)vertices.data());
 
-	void* data;
-	vkMapMemory(m_Device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-	vkUnmapMemory(m_Device.device(), stagingBufferMemory);
+	m_VertexBuffer = std::make_unique<VveBuffer>(
+		m_Device,
+		vertexSize,
+		m_VertexCount,
+		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+	);
 
-	m_Device.createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VertexBuffer, m_VertexBufferMemory);
-
-	m_Device.copyBuffer(stagingBuffer, m_VertexBuffer, bufferSize);
-
-	vkDestroyBuffer(m_Device.device(), stagingBuffer, nullptr);
-	vkFreeMemory(m_Device.device(), stagingBufferMemory, nullptr);
+	m_Device.copyBuffer(stagingBuffer.getBuffer(), m_VertexBuffer->getBuffer(), bufferSize);
 }
 
 void vve::VveMesh::createIndexBuffers(const std::vector<uint32_t>& indices)
@@ -193,21 +187,27 @@ void vve::VveMesh::createIndexBuffers(const std::vector<uint32_t>& indices)
 	if (!m_HasIndexBuffer) return;
 
 	VkDeviceSize bufferSize = sizeof(indices[0]) * m_IndexCount;
+	uint32_t indexSize = sizeof(indices[0]);
 
-	VkBuffer stagingBuffer{};
-	VkDeviceMemory stagingBufferMemory{};
+	VveBuffer stagingBuffer{
+		m_Device,
+		indexSize,
+		m_IndexCount,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	};
 
-	m_Device.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+	stagingBuffer.map();
+	stagingBuffer.writeToBuffer((void*)indices.data());
 
-	void* data;
-	vkMapMemory(m_Device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-	vkUnmapMemory(m_Device.device(), stagingBufferMemory);
 
-	m_Device.createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_IndexBuffer, m_IndexBufferMemory);
+	m_IndexBuffer = std::make_unique<VveBuffer>(
+		m_Device,
+		indexSize,
+		m_IndexCount,
+		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+	);
 
-	m_Device.copyBuffer(stagingBuffer, m_IndexBuffer, bufferSize);
-
-	vkDestroyBuffer(m_Device.device(), stagingBuffer, nullptr);
-	vkFreeMemory(m_Device.device(), stagingBufferMemory, nullptr);
+	m_Device.copyBuffer(stagingBuffer.getBuffer(), m_IndexBuffer->getBuffer(), bufferSize);
 }

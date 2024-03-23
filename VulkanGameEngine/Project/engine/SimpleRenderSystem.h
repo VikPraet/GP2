@@ -6,22 +6,23 @@
 #include "Pipeline.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "engine/FrameInfo.h"
 
 namespace vve
 {
 	class SimpleRenderSystem
 	{
 	public:
-		SimpleRenderSystem(VveDevice& device, VkRenderPass renderPass);
+		SimpleRenderSystem(VveDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
 		~SimpleRenderSystem();
 
 		SimpleRenderSystem(const SimpleRenderSystem&) = delete;
 		SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
 
-		void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<VveGameObject>& gameObjects, const VveCamera& camera);
+		void renderGameObjects(const FrameInfo& frameInfo , std::vector<VveGameObject>& gameObjects);
 
 	private:
-		void createPipelineLayout();
+		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
 		void createPipeline(VkRenderPass renderPass);
 		
 		VveDevice& m_Device;

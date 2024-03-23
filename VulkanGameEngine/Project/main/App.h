@@ -6,6 +6,7 @@
 #include "engine/window.h"
 #include "GameObject.h"
 #include "engine/Renderer.h"
+#include "engine/Descriptors.h"
 
 namespace vve
 {
@@ -30,6 +31,7 @@ namespace vve
 		VveDevice m_Device{ m_Window };
 		VveRenderer m_Renderer{m_Window, m_Device};
 
+		std::unique_ptr<VveDescriptorPool> m_GlobalPool{};
 		std::vector<VveGameObject> m_GameObjects;
 	};
 }

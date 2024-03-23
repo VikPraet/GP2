@@ -38,6 +38,8 @@ set(SOURCES
     "engine/GameTime.cpp"
     "KeyboardMovementController.cpp"
     "GameObject.cpp"
+    "engine/Buffer.cpp"
+    "engine/Descriptors.cpp"
     )
 
 # Create the executable

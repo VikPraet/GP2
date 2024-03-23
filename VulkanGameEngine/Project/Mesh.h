@@ -1,5 +1,7 @@
 #pragma once
+
 #include "engine/Device.h"
+#include "engine/Buffer.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -38,7 +40,7 @@ namespace vve
 		};
 
 		VveMesh(VveDevice& device, const VveMesh::Builder& builder);
-		~VveMesh();
+		~VveMesh() = default;
 
 		VveMesh(const VveMesh&) = delete;
 		VveMesh& operator=(const VveMesh&) = delete;
@@ -54,13 +56,11 @@ namespace vve
 
 		VveDevice& m_Device;
 
-		VkBuffer m_VertexBuffer;
-		VkDeviceMemory m_VertexBufferMemory;
+		std::unique_ptr<VveBuffer> m_VertexBuffer;
 		uint32_t m_VertexCount;
 
 		bool m_HasIndexBuffer = false;
-		VkBuffer m_IndexBuffer;
-		VkDeviceMemory m_IndexBufferMemory;
+		std::unique_ptr<VveBuffer> m_IndexBuffer;
 		uint32_t m_IndexCount;
 	};
 }
